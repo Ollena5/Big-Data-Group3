@@ -30,7 +30,8 @@ def get_ppi_data(proteins, confidence=0.1, save_to_file=True):
     return tsv_data
 
 # Example proteins
-proteins = ["ARF6", "BRCA1", "TP53"]
+proteins = ["TP53", "EGFR", "AKT1", "MAPK1", "PTEN", "MYC", "CDH1", "RB1", "VEGFA", "JAK2"]
+
 
 # Get PPI data
 ppi_data = get_ppi_data(proteins)
@@ -53,9 +54,10 @@ for line in ppi_data.split("\n"):
         print(f"Adding edge between {protein1} and {protein2}")
         G.add_edge(protein1, protein2)
 
+
 # Draw the graph with a grid layout
-plt.figure(figsize=(8, 8))
-pos = nx.spring_layout(G, k=0.01)  # Use a low k value for grid-like layout
+plt.figure(figsize=(10, 10))
+pos = nx.spring_layout(G, seed=42)  # Use a low k value for grid-like layout
 nx.draw_networkx_nodes(G, pos, node_size=2000, node_color="skyblue")
 nx.draw_networkx_edges(G, pos, alpha=0.5)
 nx.draw_networkx_labels(G, pos)
