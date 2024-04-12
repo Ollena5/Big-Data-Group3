@@ -8,6 +8,8 @@
 import requests
 import networkx as nx
 import matplotlib.pyplot as plt
+import mpld3
+from mpld3 import plugins
 
 # Function to retrieve PPI data from STRING API
 def get_ppi_data(proteins, confidence=0.1, save_to_file=True):
@@ -30,7 +32,7 @@ def get_ppi_data(proteins, confidence=0.1, save_to_file=True):
     return tsv_data
 
 # Example proteins
-proteins = ["TP53", "EGFR", "AKT1", "MAPK1", "PTEN", "MYC", "CDH1", "RB1", "VEGFA", "JAK2"]
+proteins = ["TP53", "EGFR", "AKT1", "MAPK1", "PTEN", "MYC", "CDH1", "RB1", "JAK2", "VEGFA"]
 
 
 # Get PPI data
@@ -57,10 +59,15 @@ for line in ppi_data.split("\n"):
 
 # Draw the graph with a grid layout
 plt.figure(figsize=(10, 10))
+print(f"Is G eulerian? {nx.is_eulerian(G)}" )
+if(nx.is_eulerian(G)):
+    nx.eulerize(G)
 pos = nx.spring_layout(G, seed=42)  # Use a low k value for grid-like layout
+
 nx.draw_networkx_nodes(G, pos, node_size=2000, node_color="skyblue")
 nx.draw_networkx_edges(G, pos, alpha=0.5)
 nx.draw_networkx_labels(G, pos)
+
 plt.axis("off")
 plt.title("Protein-Protein Interaction Network (Grid Layout)")
 plt.show()
