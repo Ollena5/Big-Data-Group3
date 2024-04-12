@@ -30,9 +30,9 @@ def get_ppi_data(proteins, confidence=0.1, save_to_file=True):
             f.write(tsv_data)
     
     return tsv_data
-
+#, "VEGFA"
 # Example proteins
-proteins = ["TP53", "EGFR", "AKT1", "MAPK1", "PTEN", "MYC", "CDH1", "RB1", "JAK2", "VEGFA"]
+proteins = ["TP53", "EGFR", "AKT1", "MAPK1", "PTEN", "MYC", "CDH1", "RB1", "JAK2"]
 
 
 # Get PPI data
