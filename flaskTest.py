@@ -3,6 +3,7 @@ import requests
 import networkx as nx
 import matplotlib.pyplot as plt
 import mpld3
+import math
 
 app = Flask(__name__)
 
@@ -29,7 +30,20 @@ def get_ppi_data(proteins, confidence=0.1, save_to_file=True):
 @app.route('/')
 def index():
     # Example proteins
-    proteins = ["TP53", "EGFR", "AKT1", "MAPK1", "PTEN", "MYC", "CDH1", "RB1", "JAK2"]
+    proteins = [
+        "TP53", "EGFR", "AKT1", "MAPK1", "PTEN", "MYC", "CDH1", "RB1", "JAK2",
+        "BCL2", "VEGFA", "KRAS", "PIK3CA", "STAT3", "BRCA1", "BRCA2", "ERBB2", "MTOR",
+        "FLT3", "CTNNB1", "EGF", "FGFR1", "FGF2", "FGF7", "FGFR2", "FGF8", "FGFR3",
+        "FGF9", "FGFR4", "FOXP3", "FOXL2", "FOXO1", "FOXO3", "FOXO4", "FOXO6", "FOXP1",
+        "HGF", "MET", "HRAS", "KRAS", "NRAS", "RET", "RAF1", "MAP2K1", "MAP2K2", "MAPK3",
+        "MAPK8", "MAPK9", "MAPK10", "MAPK11", "MAPK12", "MAPK13", "MAPK14", "MAP3K1", "MAP3K3",
+        "MAP3K7", "MAP3K14", "MAP3K15", "MAP3K20", "MAP4K4", "MAP4K5", "MAP4K1", "MAP4K3", "MAP4K2",
+        "MAP4K6", "MAP4K7", "MAP4K8", "MAP4K9", "MAP4K10", "MAP4K11", "MAP4K12", "MAP4K13", "MAP4K14",
+        "MAP4K15", "MAP4K16", "MAP4K17", "MAP4K18", "MAP4K19", "MAP4K20", "MAP4K21", "MAP4K22", "MAP4K23",
+        "MAP4K24", "MAP4K25", "MAP4K26", "MAP4K27", "MAP4K28", "MAP4K29", "MAP4K30", "MAP4K31", "MAP4K32",
+        "MAP4K33", "MAP4K34", "MAP4K35", "MAP4K36", "MAP4K37", "MAP4K38", "MAP4K39", "MAP4K40", "MAP4K41",
+        "MAP4K42", "MAP4K43", "MAP4K44", "MAP4K45", "MAP4K46", "MAP4K47", "MAP4K48", "MAP4K49", "MAP4K50"
+    ]
 
     # Get PPI data
     ppi_data = get_ppi_data(proteins)
@@ -45,30 +59,44 @@ def index():
         if line.startswith("#"):
             continue
         cols = line.strip().split("\t")
-        if len(cols) < 4:  # Ensure there are enough columns
+        if len(cols) < 4:
             continue
-        protein1, protein2 = cols[2], cols[3]  # Use the preferred name columns
+        protein1, protein2 = cols[2], cols[3]
         if protein1 in proteins and protein2 in proteins:
             G.add_edge(protein1, protein2)
 
+    # Filter out proteins with no edge connections
+    G.add_nodes_from(node for node, degree in G.degree() if degree > 0)
+
+    # Arrange nodes in a grid-like formation
+    # num_nodes = len(G.nodes())
+    # rows = int(math.sqrt(num_nodes)) + 1
+    # cols = int(math.ceil(num_nodes / rows))
+    # pos = {(i % cols, -(i // cols)): (i % cols, -(i // cols)) for i in range(num_nodes)}
+
+    # Check if node has a position, if not, assign a default position
+    # for node in G.nodes():
+    #     if node not in pos:
+    #         pos[node] = (0, 0)
+
     # Draw the graph with a grid layout
     plt.figure(figsize=(10, 10))
-    if(nx.is_eulerian(G)):
+    if nx.is_eulerian(G):
         nx.eulerize(G)
-    pos = nx.spring_layout(G, seed=42)  # Use a low k value for grid-like layout
-
+        
     # Select a protein
     selected_protein = request.args.get('selected_protein', default='TP53')
 
     # Adjust node and edge alpha values based on connectivity to the selected protein
     node_alpha = {node: 1.0 if node == selected_protein else 0.2 for node in G.nodes()}
-    edge_alpha = {edge: 1 if edge == selected_protein else 0.2 for edge in G.edges()}
     edge_color = ["skyblue" if selected_protein in edge else "lightgray" for edge in G.edges()]
     edge_width = [3.0 if selected_protein in edge else 1.0 for edge in G.edges()]
-    
 
+    # Align nodes to a graph
+    pos = nx.spring_layout(G, pos=pos, fixed=pos.keys())
+    
     nx.draw_networkx_nodes(G, pos, node_size=2000, node_color="skyblue", alpha=node_alpha.values())
-    nx.draw_networkx_edges(G, pos, edge_color=edge_color, width=edge_width, alpha=1)
+    nx.draw_networkx_edges(G, pos, edge_color=edge_color, width=edge_width, alpha=0.5)  # Use a single scalar value for alpha
     nx.draw_networkx_labels(G, pos)
 
     plt.axis("off")
@@ -76,7 +104,7 @@ def index():
     plt.savefig('static/graph.png')  # Save the graph as a static file
 
     # Render the template with the graph and the list of buttons
-    return render_template('index.html', proteins=proteins, selected_protein=selected_protein)
+    return render_template('index.html', proteins=proteins, G=G)
 
 if __name__ == '__main__':
     app.run(debug=True)
