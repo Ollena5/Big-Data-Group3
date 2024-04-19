@@ -1,26 +1,3 @@
-# import networkx as nx
-# import matplotlib.pyplot as plt
-
-# # Create a 3x3 grid graph
-# G = nx.grid_2d_graph(3, 3)
-
-# # Add diagonal edges
-# for i in range(3):
-#     for j in range(3):
-#         if (i + 1 < 3) and (j + 1 < 3):
-#             G.add_edge((i, j), (i + 1, j + 1))
-#         if (i - 1 >= 0) and (j + 1 < 3):
-#             G.add_edge((i, j), (i - 1, j + 1))
-#         if (i + 1 < 3) and (j - 1 >= 0):
-#             G.add_edge((i, j), (i + 1, j - 1))
-#         if (i - 1 >= 0) and (j - 1 >= 0):
-#             G.add_edge((i, j), (i - 1, j - 1))
-
-# # Draw the graph
-# pos = {(x, y): (y, -x) for x, y in G.nodes()}  # Adjusting positions for better visualization
-# nx.draw(G, pos, with_labels=True, node_size=300, node_color='lightblue', font_size=10)
-
-
 import requests
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -68,24 +45,27 @@ for line in ppi_data.split("\n"):
     if protein1 in proteins and protein2 in proteins:
         G.add_edge(protein1, protein2)
 
-# Check if all proteins in the `proteins` list have at least one interaction
-for protein in proteins:
-    if not any(protein in edge for edge in G.edges):
-        print(f"Protein {protein} does not have any interactions in the PPI data.")
-        
 # Create a 2D grid graph
 G_grid = nx.grid_2d_graph(10, 10)
 
-# Define positions based on the grid layout
-pos_grid = {(i, j): (i, j) for i in range(10) for j in range(10)}
+
+grid_size = 10  # Adjust grid size if necessary
+pos_grid = {(i, j): (i, j) for i in range(grid_size) for j in range(grid_size)}
+protein_positions = list(pos_grid.values())[:len(proteins)]
+pos_overlay = {protein: position for protein, position in zip(proteins, protein_positions)}
 
 # Draw the grid graph using the defined positions
 nx.draw(G_grid, pos=pos_grid, with_labels=True, node_size=500, node_color="skyblue", edge_color='gray')
 
 # Overlay the protein nodes from the PPI data onto the grid
 # Adjust the positions to center them on the grid cells
-pos_overlay = {node: (x + 0.5, y + 0.5) for node, (x, y) in pos_grid.items()}
+# This will place each node in its own cell on the grid
+for node, (x, y) in pos_overlay.items():
+    pos_overlay[node] = (x + 0.5, y + 0.5)
+
+# Draw the protein nodes with labels
 nx.draw_networkx_nodes(G, pos=pos_overlay, node_size=500, node_color="red")
+nx.draw_networkx_labels(G, pos=pos_overlay)
 
 # Draw the edges of the PPI graph
 nx.draw_networkx_edges(G, pos=pos_overlay, edge_color='black')
@@ -93,4 +73,3 @@ nx.draw_networkx_edges(G, pos=pos_overlay, edge_color='black')
 plt.axis("off")
 plt.title("Protein-Protein Interaction Network on a Grid Layout")
 plt.show()
-

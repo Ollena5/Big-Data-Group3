@@ -61,31 +61,27 @@ def index():
     # Draw the graph with a grid layout
     plt.figure(figsize=(12, 12))
 
-    # # Create a graph
-    # G = nx.Graph()
+    # Create a graph
+    G = nx.Graph()
 
-    # # Add nodes
-    # G.add_nodes_from(proteins)
+    # Add nodes
+    G.add_nodes_from(proteins)
 
-    # # Add edges based on PPI data
-    # for line in ppi_data.split("\n"):
-    #     if line.startswith("#"):
-    #         continue
-    #     cols = line.strip().split("\t")
-    #     if len(cols) < 4:
-    #         continue
-    #     protein1, protein2 = cols[2], cols[3]
-    #     if protein1 in proteins and protein2 in proteins:
-    #         G.add_edge(protein1, protein2)
+    # Add edges based on PPI data
+    for line in ppi_data.split("\n"):
+        if line.startswith("#"):
+            continue
+        cols = line.strip().split("\t")
+        if len(cols) < 4:
+            continue
+        protein1, protein2 = cols[2], cols[3]
+        if protein1 in proteins and protein2 in proteins:
+            G.add_edge(protein1, protein2)
 
-    # # Filter out proteins with no edge connections
-    # G.add_nodes_from(node for node, degree in G.degree() if degree > 0)
+    # Filter out proteins with no edge connections
+    G.add_nodes_from(node for node, degree in G.degree() if degree > 0)
 
-    # #Arrange nodes in a grid-like formation
-    # num_nodes = len(G.nodes())
-    # grid_size = math.ceil(math.sqrt(num_nodes))
-    # pos = nx.grid_2d_graph(grid_size, grid_size)
-        
+       
     # Select a protein
     selected_protein = request.args.get('selected_protein', default='All Proteins')
 
