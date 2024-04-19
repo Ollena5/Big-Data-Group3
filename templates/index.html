@@ -11,9 +11,7 @@
     <div>
         <h2>Select a protein:</h2>
         <form action="/" method="get">
-            {% if 'all' in proteins %}
-                <button type="submit" name="selected_protein" value="all" {% if selected_protein == 'all' %}disabled{% endif %}>All Proteins</button>
-            {% endif %}
+            <button type="submit" name="selected_protein" value="all" {% if selected_protein == 'all' %}disabled{% endif %}>All Proteins</button>
             {% for protein in proteins if protein in G.nodes %}
                 <button type="submit" name="selected_protein" value="{{ protein }}" {% if protein == selected_protein %}disabled{% endif %}>{{ protein }}</button>
             {% endfor %}
