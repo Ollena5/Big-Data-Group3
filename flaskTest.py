@@ -53,8 +53,8 @@ def index():
     ppi_data = get_ppi_data(proteins)
     
     # Create a graph
-    n = 3
-    G = nx.sudoku_graph(n)
+    n = 12
+    G = nx.Graph()
     mapping = dict(zip(G.nodes(), proteins))
     pos = dict(zip(list(G.nodes()), nx.grid_2d_graph(n * n, n * n)))
 
