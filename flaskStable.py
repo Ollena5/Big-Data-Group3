@@ -27,6 +27,7 @@ def get_ppi_data(proteins, species="9606", confidence=0.1, save_to_file=True):
 
 def visualize_network(G, selectedProtein):
     p4c.create_network_from_networkx(G, title='baseNetwork')
+    p4c.set_node_color_default(new_color='#D20103')
     suid = p4c.get_network_suid()
     if(selectedProtein == 'all'):
         p4c.layout_network(layout_name='grid', network=suid)
@@ -37,9 +38,10 @@ def visualize_network(G, selectedProtein):
         p4c.layout_network(layout_name='grid', network=pruneSuid)
     else:
         nodeSUID = p4c.node_name_to_node_suid(selectedProtein, network=suid)
-        print(f'nodeSUID = p4c.node_name_to_node_suid(selectedProtein){nodeSUID}')
+        #print(f'nodeSUID = p4c.node_name_to_node_suid(selectedProtein){nodeSUID}')
         p4c.select_nodes(nodeSUID, network=suid)
-        print(f'p4c.get_selected_nodes(){p4c.get_selected_nodes()}')
+        p4c.set_node_color_bypass(nodeSUID, network=suid, new_colors='#0DB801')
+        #print(f'p4c.get_selected_nodes(){p4c.get_selected_nodes()}')
         p4c.select_edges_adjacent_to_selected_nodes(network=suid)
         p4c.create_subnetwork(edges='selected', nodes='selected', nodes_by_col='COMMON',subnetwork_name='selectedNetwork', network=suid)
         selectedSuid = p4c.get_network_suid()
