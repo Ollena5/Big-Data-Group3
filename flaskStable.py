@@ -28,6 +28,8 @@ def get_ppi_data(proteins, species="9606", confidence=0.1, save_to_file=True):
 def visualize_network(G, selectedProtein):
     p4c.create_network_from_networkx(G, title='baseNetwork')
     p4c.set_node_color_default(new_color='#D20103')
+    p4c.set_node_fill_opacity_default(new_opacity=175)
+    p4c.scale_layout(axis='Both Axes', scale_factor=100)
     suid = p4c.get_network_suid()
     if(selectedProtein == 'all'):
         p4c.layout_network(layout_name='grid', network=suid)
