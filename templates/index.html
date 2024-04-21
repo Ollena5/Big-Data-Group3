@@ -10,7 +10,7 @@
     <h1>Protein-Protein Interaction Network</h1>
     <div>
         <h2>Enter proteins (comma-separated):</h2>
-        <form action="/" method="post">
+        <form action="/" method="get">
             <input type="text" name="enteredProtein" id="enteredProtein">
             <button type="submit">Submit</button>
         </form>
@@ -22,6 +22,7 @@
                 <button type="submit" name="selected_protein" value="{{ protein }}" {% if protein == selected_protein %}disabled{% endif %}>{{ protein }}</button>
             {% endfor %}
         </form>
+        
     </div>
     <div>
         <img src="{{ url_for('static', filename='graph.png') }}" alt="Protein-Protein Interaction Network">
