@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein-Protein Interaction Network</title>
+    
+</head>
+<body>
+    <h1>Protein-Protein Interaction Network</h1>
+    <div>
+        <h2>Enter proteins (comma-separated):</h2>
+        <form action="/" method="get">
+            <input type="text" name="enteredProtein" id="enteredProtein">
+            <button type="submit">Submit</button>
+        </form>
+        <h2>Select a protein:</h2>
+        <form action="/" method="get">
+            {% for protein in proteins %}
+                <button type="submit" name="selectedProtein" value="{{ protein }}" {% if protein == selectedProtein %}disabled{% endif %}>{{ protein }}</button>
+            {% endfor %}
+        </form>
+        <form action="/" method="get">
+            <button type="submit" name="selectedProtein" value="all" {% if selectedProtein == 'all' %}disabled{% endif %}>All Proteins</button>
+            <button type="submit" name="selectedProtein" value="prune" {% if selectedProtein == 'prune' %}disabled{% endif %}>Pruned Proteins</button>
+        </form>
+    </div>
+    <div>
+        <img src="{{ url_for('static', filename='graph.png') }}" alt="Protein-Protein Interaction Network">
+    </div>
+</body>
+</html>
