@@ -18,12 +18,12 @@
         <h2>Select a protein:</h2>
         <form action="/" method="get">
             {% for protein in proteins %}
-                <button type="submit" name="selected_protein" value="{{ protein }}" {% if protein == selected_protein %}disabled{% endif %}>{{ protein }}</button>
+                <button type="submit" name="selectedProtein" value="{{ protein }}" {% if protein == selectedProtein %}disabled{% endif %}>{{ protein }}</button>
             {% endfor %}
         </form>
         <form action="/" method="get">
-            <button type="submit" name="selected_protein" value="all" {% if selected_protein == 'all' %}disabled{% endif %}>All Proteins</button>
-            <button type="submit" name="selected_protein" value="prune" {% if selected_protein == 'prune' %}disabled{% endif %}>Pruned Proteins</button>
+            <button type="submit" name="selectedProtein" value="all" {% if selectedProtein == 'all' %}disabled{% endif %}>All Proteins</button>
+            <button type="submit" name="selectedProtein" value="prune" {% if selectedProtein == 'prune' %}disabled{% endif %}>Pruned Proteins</button>
         </form>
     </div>
     <div>

@@ -6,9 +6,8 @@ import networkx as nx
 app = Flask(__name__)
 app.secret_key = 'KSUBigDataGroup3'
 
-
 # Default array of proteins
-default_proteins = [
+defaultProteins = [
     "TP53", "EGFR", "AKT1", "MAPK1", "PTEN", "MYC", "CDH1", "RB1", "JAK2",
     "BCL2", "VEGFA", "KRAS", "PIK3CA", "STAT3", "BRCA1", "BRCA2", "ERBB2", "MTOR",
     "FLT3", "CTNNB1", "EGF", "FGFR1", "FGF2", "FGF7", "FGFR2", "FGF8", "FGFR3",
@@ -26,7 +25,7 @@ default_proteins = [
 setupCompleted = False
 
 # Function to retrieve PPI data from STRING API
-def get_ppi_data(proteins, species="9606", confidence=0.1, save_to_file=True):
+def getPpiData(proteins, species="9606", confidence=0.1, saveToFile=True):
     url = "https://string-db.org/api/tsv/network"
     params = {
         "identifiers": "%0d".join(proteins),
@@ -37,15 +36,15 @@ def get_ppi_data(proteins, species="9606", confidence=0.1, save_to_file=True):
     }
     response = requests.post(url, params=params)
     response.raise_for_status()
-    tsv_data = response.text
+    tsvData = response.text
     
-    if save_to_file:
+    if saveToFile:
         with open('ppi_data.tsv', 'w') as f:
-            f.write(tsv_data)
+            f.write(tsvData)
     
-    return tsv_data
+    return tsvData
 
-def visualize_network(G, selectedProtein):
+def visualizeNetwork(G, selectedProtein):
     p4c.create_network_from_networkx(G, title='baseNetwork')
     p4c.set_node_color_default(new_color='#D20103')
     p4c.set_node_fill_opacity_default(new_opacity=175)
@@ -60,10 +59,8 @@ def visualize_network(G, selectedProtein):
         p4c.layout_network(layout_name='grid', network=pruneSuid)
     else:
         nodeSUID = p4c.node_name_to_node_suid(selectedProtein, network=suid)
-        #print(f'nodeSUID = p4c.node_name_to_node_suid(selectedProtein){nodeSUID}')
         p4c.select_nodes(nodeSUID, network=suid)
         p4c.set_node_color_bypass(nodeSUID, network=suid, new_colors='#0DB801')
-        #print(f'p4c.get_selected_nodes(){p4c.get_selected_nodes()}')
         p4c.select_edges_adjacent_to_selected_nodes(network=suid)
         p4c.create_subnetwork(edges='selected', nodes='selected', nodes_by_col='COMMON',subnetwork_name='selectedNetwork', network=suid)
         selectedSuid = p4c.get_network_suid()
@@ -78,8 +75,8 @@ def visualize_network(G, selectedProtein):
 def setup():
     global setupCompleted
     if not setupCompleted:
-        session['proteins'] = default_proteins
-        setup_completed = True
+        session['proteins'] = defaultProteins
+        setupCompleted = True
 
 
 @app.route('/')
@@ -97,7 +94,7 @@ def index():
                 proteins.append(enteredProtein.strip())
         session['proteins'] = proteins
     # Get PPI data
-    ppi_data = get_ppi_data(session['proteins'])
+    ppiData = getPpiData(session['proteins'])
 
     # Create a graph
     G = nx.Graph()
@@ -106,7 +103,7 @@ def index():
     G.add_nodes_from(session['proteins'])
         
     # Add edges based on PPI data
-    for line in ppi_data.split("\n"):
+    for line in ppiData.split("\n"):
         if line.startswith("#"):
             continue
         cols = line.strip().split("\t")
@@ -117,8 +114,8 @@ def index():
             G.add_edge(protein1, protein2)
 
     # Visualize the network using Cytoscape and the grid layout algorithm
-    selected_protein = request.args.get('selected_protein', default='all') 
-    visualize_network(G, selected_protein)
+    selectedProtein = request.args.get('selectedProtein', default='all') 
+    visualizeNetwork(G, selectedProtein)
 
     return render_template('index.html', proteins=session['proteins'], G=G)
 
