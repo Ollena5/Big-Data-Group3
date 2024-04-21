@@ -1,9 +1,7 @@
 from flask import Flask, render_template, request, session
 import requests
 import py4cytoscape as p4c
-import math
 import networkx as nx 
-import os
 
 app = Flask(__name__)
 app.secret_key = 'KSUBigDataGroup3'
