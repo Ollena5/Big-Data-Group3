@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Protein-Protein Interaction Network</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Protein-Protein Interaction Network</h1>
@@ -16,13 +17,14 @@
         </form>
         <h2>Select a protein:</h2>
         <form action="/" method="get">
-            <button type="submit" name="selected_protein" value="all" {% if selected_protein == 'all' %}disabled{% endif %}>All Proteins</button>
-            <button type="submit" name="selected_protein" value="prune" {% if selected_protein == 'prune' %}disabled{% endif %}>Pruned Proteins</button>
             {% for protein in proteins %}
                 <button type="submit" name="selected_protein" value="{{ protein }}" {% if protein == selected_protein %}disabled{% endif %}>{{ protein }}</button>
             {% endfor %}
         </form>
-        
+        <form action="/" method="get">
+            <button type="submit" name="selected_protein" value="all" {% if selected_protein == 'all' %}disabled{% endif %}>All Proteins</button>
+            <button type="submit" name="selected_protein" value="prune" {% if selected_protein == 'prune' %}disabled{% endif %}>Pruned Proteins</button>
+        </form>
     </div>
     <div>
         <img src="{{ url_for('static', filename='graph.png') }}" alt="Protein-Protein Interaction Network">
