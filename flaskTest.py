@@ -9,7 +9,7 @@ import networkx as nx
 def get_ppi_data(proteins, species="9606", confidence=0.1, save_to_file=True):
     url = "https://string-db.org/api/tsv/network"
     params = {
-        "identifiers": "%0d".join(proteins),
+        "identifiers": "\r".join(proteins),
         "species": species,  # Human species
         "caller_identity": "KSUBigDataGroup3",
         "network_flavor": "confidence",
@@ -51,6 +51,7 @@ def visualize_network(G, selectedProtein):
     
     # Display the network in Cytoscape
     p4c.export_image(filename='static/graph.png', overwrite_file=True, hide_labels=False, transparent_background=True)
+    p4c.delete_all_networks()
 
 
 
@@ -58,8 +59,9 @@ def visualize_network(G, selectedProtein):
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
+    #ppi_data = ""
     # Example proteins
     proteins = [
         "TP53", "EGFR", "AKT1", "MAPK1", "PTEN", "MYC", "CDH1", "RB1", "JAK2",
@@ -75,8 +77,17 @@ def index():
         "MAP4K33", "MAP4K34", "MAP4K35", "MAP4K36", "MAP4K37", "MAP4K38", "MAP4K39", "MAP4K40", "MAP4K41",
         "MAP4K42", "MAP4K43", "MAP4K44", "MAP4K45", "MAP4K46", "MAP4K47", "MAP4K48", "MAP4K49", "MAP4K50"
     ]
-    # Get PPI data
+    
+    if request.method == 'POST':
+        enteredProtein = request.args.get('enteredProtein', '')
+        if(enteredProtein != ''):
+            if(',' in enteredProtein):
+                enteredProtein = enteredProtein.split(',')    
+            proteins.append(enteredProtein)
+            ppi_data = get_ppi_data(proteins)
+    
     ppi_data = get_ppi_data(proteins)
+        
 
     # Create a graph
     G = nx.Graph()

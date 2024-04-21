@@ -9,6 +9,11 @@
 <body>
     <h1>Protein-Protein Interaction Network</h1>
     <div>
+        <h2>Enter proteins (comma-separated):</h2>
+        <form action="/" method="post">
+            <input type="text" name="enteredProtein" id="enteredProtein">
+            <button type="submit">Submit</button>
+        </form>
         <h2>Select a protein:</h2>
         <form action="/" method="get">
             <button type="submit" name="selected_protein" value="all" {% if selected_protein == 'all' %}disabled{% endif %}>All Proteins</button>
